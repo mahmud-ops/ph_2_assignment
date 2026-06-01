@@ -6,6 +6,13 @@ const createUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password, role } = req.body;
 
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, email, and password are required.",
+      });
+    }
+
     const result = await userService.createUserInDB(req.body);
 
     return res.status(201).json({
@@ -69,7 +76,7 @@ const getSingleUser = async (req: Request, res: Response) => {
     return res.status(200).json({
       success: true,
       message: "Fetched user successfully.",
-      data: result.rows[0],
+      data: sanitizeUser(result.rows[0]),
     });
   } catch (error: any) {
     return res.status(500).json({
@@ -97,7 +104,7 @@ const updateUser = async (req: Request, res: Response) => {
     return res.status(201).json({
       success: true,
       message: "Updated user successfully.",
-      data: result.rows[0],
+      data: sanitizeUser(result.rows[0]),
     });
   } catch (error: any) {
     return res.status(500).json({
@@ -124,7 +131,7 @@ const deleteUser = async (req: Request, res: Response) => {
     return res.status(200).json({
       success: true,
       message: "Deleted user successfully.",
-      data: result.rows[0],
+      data: sanitizeUser(result.rows[0]),
     });
   } catch (error: any) {
     return res.status(500).json({
