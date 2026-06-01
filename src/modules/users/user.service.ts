@@ -6,8 +6,8 @@ const createUserInDB = async (payload: any) => {
   const result = await pool.query(
     `
         INSERT INTO users (name, email, password, role)
-        VALUES ($1, $2, $3, $4)
-        RETURNING *
+        VALUES ($1, $2, $3, COALESCE($4,'contributor'))
+        RETURNING id, name, email, role, created_at, updated_at
     `,
     [name, email, password, role],
   );
@@ -17,9 +17,7 @@ const createUserInDB = async (payload: any) => {
 
 const getAllUsersFromDB = async () => {
   const result = await pool.query(
-    `
-        SELECT * FROM users 
-    `,
+    `SELECT id, name, email, role, created_at, updated_at FROM users`,
   );
   return result;
 };
@@ -51,13 +49,12 @@ const updateUserInDB = async (id: any, payload: any) => {
         WHERE id = $5
         RETURNING *
     `,
-    [name,email,password,role,id],
+    [name, email, password, role, id],
   );
   return result;
 };
 
 const deleteUserFromDB = async (id: any) => {
-
   const result = await pool.query(
     `
         DELETE FROM users
@@ -74,5 +71,5 @@ export const userService = {
   getAllUsersFromDB,
   getSingleUserFromDB,
   updateUserInDB,
-  deleteUserFromDB
+  deleteUserFromDB,
 };
