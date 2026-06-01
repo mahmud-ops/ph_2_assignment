@@ -1,9 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { type JwtPayload } from "jsonwebtoken";
 import config from "../config";
+import { pool } from "../database";
+import { sanitizeUser } from "../modules/users/user.utility";
 
 const auth = () => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
 
     if (!token) {
@@ -16,7 +18,25 @@ const auth = () => {
     const decodedToken = jwt.verify(
       token as string,
       config.accessKey as string,
+    ) as JwtPayload;
+
+    // getting user from the db with the email from the token
+    const userData = await pool.query(
+      `
+            SELECT * FROM users
+            WHERE email = $1
+        `,
+      [decodedToken.email],
     );
+
+    if (userData.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    req.user = decodedToken;
 
     next();
   };
