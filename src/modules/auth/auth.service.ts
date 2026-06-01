@@ -1,6 +1,7 @@
 import { pool } from "../../database";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import config from "../../config";
 
 const loginUserIntoDB = async (payload: {
   email: string;
@@ -34,11 +35,11 @@ const loginUserIntoDB = async (payload: {
   };
 
   // get jwt
-  const accessToken = jwt.sign(jwtPayload, "accesskey16247", {
+  const accessToken = jwt.sign(jwtPayload, config.accessKey as string, {
     expiresIn: "1d",
   });
 
-  return { accessToken , user};
+  return { accessToken, user };
 };
 
 export const authService = {

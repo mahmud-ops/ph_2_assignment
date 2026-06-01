@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { userService } from "./user.service";
-import { sanitizeUser } from "./user.utiliry";
+import { sanitizeUser, handleDBError } from "./user.utility";
 
 const createUser = async (req: Request, res: Response) => {
   try {

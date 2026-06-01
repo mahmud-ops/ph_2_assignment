@@ -1,8 +1,8 @@
 import { Pool } from "pg";
+import config from "../config";
 
 export const pool = new Pool({
-  connectionString:
-    "postgresql://neondb_owner:npg_qjXtAoZP4uv3@ep-super-math-ao72gcpk-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
+  connectionString: config.connectionString as string,
 });
 
 // creating table in neon DB

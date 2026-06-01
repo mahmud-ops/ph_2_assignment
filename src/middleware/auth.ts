@@ -1,4 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import config from "../config";
 
 const auth = () => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -10,6 +12,11 @@ const auth = () => {
         message: "Unauthorized access!!",
       });
     }
+
+    const decodedToken = jwt.verify(
+      token as string,
+      config.accessKey as string,
+    );
 
     next();
   };
