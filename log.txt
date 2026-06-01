@@ -1,1 +1,1 @@
-Url: /api/users, Method: GET, Time: 1780323729679
+Url: /api/users, Method: GET, Time: 1780323729679Url: /api/users, Method: GET, Time: 1780324051954Url: /api/auth/login, Method: POST, Time: 1780324124414Url: /api/users, Method: GET, Time: 1780324219220Url: /api/users, Method: GET, Time: 1780324248580Url: /api/users, Method: GET, Time: 1780324293622Url: /api/users, Method: GET, Time: 1780324432311
