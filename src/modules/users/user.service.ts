@@ -1,7 +1,10 @@
 import { pool } from "../../database";
+import bcrypt from "bcrypt";
 
 const createUserInDB = async (payload: any) => {
   const { name, email, password, role } = payload;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const result = await pool.query(
     `
@@ -9,7 +12,7 @@ const createUserInDB = async (payload: any) => {
         VALUES ($1, $2, $3, COALESCE($4,'contributor'))
         RETURNING id, name, email, role, created_at, updated_at
     `,
-    [name, email, password, role],
+    [name, email, hashedPassword, role],
   );
 
   return result;
@@ -36,6 +39,11 @@ const getSingleUserFromDB = async (id: any) => {
 const updateUserInDB = async (id: any, payload: any) => {
   const { name, email, password, role } = payload;
 
+  let hashedPassword;
+  if (password) {
+    hashedPassword = await bcrypt.hash(password, 10);
+  }
+
   const result = await pool.query(
     `
         UPDATE users
@@ -49,7 +57,7 @@ const updateUserInDB = async (id: any, payload: any) => {
         WHERE id = $5
         RETURNING *
     `,
-    [name, email, password, role, id],
+    [name, email, hashedPassword, role, id],
   );
   return result;
 };
