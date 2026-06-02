@@ -88,8 +88,67 @@ const getSingleIssueFromDB = async (id: any) => {
   return issues;
 };
 
+const updateIssueInDB = async (
+  id: any,
+  payload: {
+    title: string;
+    description: string;
+    type: string;
+    status: string;
+  },
+  user: any,
+) => {
+  // get the issue via id
+  const issueResult = await pool.query(
+    `
+    SELECT * FROM issues
+    WHERE id = $1
+    `,
+    [id],
+  );
+
+  const issue = issueResult.rows[0];
+
+  if (!issue) {
+    throw new Error("Issue not found");
+  }
+  // check if maintainer
+  const isMaintainer: boolean = user.role === "maintainer";
+
+  // rules if not maintainer (contributor)
+  if (!isMaintainer) {
+    if (issue.reporter_id !== user.id) {
+      throw new Error("Forbidden: not owner !!");
+    }
+
+    if (issue.status !== "open") {
+      throw new Error("Forbidden: status locked !!");
+    }
+  }
+
+  const { title, description, type, status } = payload;
+
+  const result = await pool.query(
+    `
+      UPDATE issues
+      SET
+        title = COALESCE($1, title),
+        description = COALESCE($2, description),
+        type = COALESCE($3, type),
+        status = COALESCE($4, status),
+        updated_at = NOW()
+      WHERE id = $5
+      RETURNING *
+    `,
+    [title, description, type, status, id],
+  );
+
+  return result;
+};
+
 export const issueService = {
   createIssueInDB,
   getAllIssuesFromDB,
   getSingleIssueFromDB,
+  updateIssueInDB,
 };

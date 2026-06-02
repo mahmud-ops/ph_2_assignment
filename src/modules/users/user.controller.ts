@@ -92,6 +92,14 @@ const updateUser = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { name, email, password, role } = req.body;
 
+    if (
+      req.body.status !== "open" ||
+      req.body.status !== "in_progree" ||
+      req.body.status !== "resolved"
+    ) {
+      throw new Error("Invalid status");
+    }
+
     const result = await userService.updateUserInDB(id, req.body);
 
     if (result.rows.length === 0) {
