@@ -110,9 +110,45 @@ const updateIssue = async (req: Request, res: Response) => {
   }
 };
 
+const deleteIssue = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const user = req.user;
+    const result = await issueService.deleteIssueFromDB(id, user);
+
+    res.status(200).json({
+      success: true,
+      message: "Issue deleted successfully",
+      data: result.rows[0],
+    });
+  } catch (error: any) {
+    if (error.message === "Issue not found") {
+      return res.status(404).json({
+        success: false,
+        message: "Issue not found",
+        data: null,
+      });
+    }
+    if (error.message.includes("Forbidden")) {
+      return res.status(403).json({
+        success: false,
+        message: error.message,
+        error: error,
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      error: error,
+    });
+  }
+};
+
 export const issueController = {
   createIssue,
   getAllIssues,
   getSingleIssue,
   updateIssue,
+  deleteIssue,
 };

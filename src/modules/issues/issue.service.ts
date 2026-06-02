@@ -146,9 +146,45 @@ const updateIssueInDB = async (
   return result;
 };
 
+const deleteIssueFromDB = async (id: any, user: any) => {
+  // get the issue via id
+  const issueResult = await pool.query(
+    `
+    SELECT * FROM issues
+    WHERE id = $1
+    `,
+    [id],
+  );
+
+  const issue = issueResult.rows[0];
+
+  if (!issue) {
+    throw new Error("Issue not found");
+  }
+  // check if maintainer
+  const isMaintainer: boolean = user.role === "maintainer";
+
+  // rules if not maintainer (contributor)
+  if (!isMaintainer) {
+    throw new Error("Forbidden !!");
+  }
+
+  const result = await pool.query(
+    `
+      DELETE FROM issues
+      WHERE id = $1
+      RETURNING *
+    `,
+    [id],
+  );
+
+  return result;
+};
+
 export const issueService = {
   createIssueInDB,
   getAllIssuesFromDB,
   getSingleIssueFromDB,
   updateIssueInDB,
+  deleteIssueFromDB,
 };
