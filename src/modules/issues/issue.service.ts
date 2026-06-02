@@ -20,10 +20,17 @@ const createIssueInDB = async (payload: any, reporter_id: number) => {
   return result;
 };
 
-const getAllIssuesFromDB = async () => {
+const getAllIssuesFromDB = async (sort: string = "newest") => {
+  if (sort !== "newest" && sort !== "oldest") {
+    sort = "newest";
+  }
+
+  const orderDirection = sort === "oldest" ? "ASC" : "DESC";
+
   const issueResult = await pool.query(
     `
     SELECT * FROM issues
+    ORDER BY created_at ${orderDirection}
     `,
   );
 

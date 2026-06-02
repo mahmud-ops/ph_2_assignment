@@ -23,7 +23,8 @@ const createIssue = async (req: Request, res: Response) => {
 
 const getAllIssues = async (req: Request, res: Response) => {
   try {
-    const result = await issueService.getAllIssuesFromDB();
+    const sort = req.query.sort as string | undefined;
+    const result = await issueService.getAllIssuesFromDB(sort);
 
     if (result.length === 0) {
       return res.status(404).json({
