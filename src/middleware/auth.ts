@@ -4,7 +4,6 @@ import config from "../config";
 import { pool } from "../database";
 
 const auth = (...roles: any[]) => {
-
   return async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
 
@@ -36,7 +35,7 @@ const auth = (...roles: any[]) => {
       });
     }
 
-    req.user = decodedToken;
+    req.user = userData.rows[0];
 
     next();
   };
