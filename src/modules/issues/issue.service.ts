@@ -20,19 +20,30 @@ const createIssueInDB = async (payload: any, reporter_id: number) => {
   return result;
 };
 
-const getAllIssuesFromDB = async (sort: string = "newest") => {
+const getAllIssuesFromDB = async (sort: string = "newest", type?: string) => {
   if (sort !== "newest" && sort !== "oldest") {
     sort = "newest";
   }
 
+  // type validation
+  const valid_type =
+    type && (type === "bug" || type === "feature_request") ? type : undefined;
+
   const orderDirection = sort === "oldest" ? "ASC" : "DESC";
 
-  const issueResult = await pool.query(
-    `
-    SELECT * FROM issues
-    ORDER BY created_at ${orderDirection}
-    `,
-  );
+  // ---- query forming ----
+  let query = `SELECT * FROM issues`;
+  const params: any[] = [];
+
+  if (valid_type) {
+    query += ` WHERE type = $1`;
+    params.push(valid_type);
+  }
+
+  query += ` ORDER BY created_at ${orderDirection}`;
+
+  const issueResult = await pool.query(query, params);
+  // -----------------------
 
   const reporterIds = issueResult.rows.map((issue) => issue.reporter_id);
 
