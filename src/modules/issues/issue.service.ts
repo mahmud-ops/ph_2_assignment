@@ -20,24 +20,44 @@ const createIssueInDB = async (payload: any, reporter_id: number) => {
   return result;
 };
 
-const getAllIssuesFromDB = async (sort: string = "newest", type?: string) => {
+const getAllIssuesFromDB = async (
+  sort: string = "newest",
+  type?: string,
+  status?: string,
+) => {
   if (sort !== "newest" && sort !== "oldest") {
     sort = "newest";
   }
 
-  // type validation
+  // param validation
   const valid_type =
     type && (type === "bug" || type === "feature_request") ? type : undefined;
+
+  const valid_status =
+    status &&
+    (status === "open" || status === "in_progress" || status === "resolved")
+      ? status
+      : undefined;
 
   const orderDirection = sort === "oldest" ? "ASC" : "DESC";
 
   // ---- query forming ----
   let query = `SELECT * FROM issues`;
   const params: any[] = [];
+  const conditions: string[] = []; // type/status = $num ( prevent overlapping )
 
   if (valid_type) {
-    query += ` WHERE type = $1`;
+    conditions.push(`type = $${params.length + 1}`);
     params.push(valid_type);
+  }
+
+  if (valid_status) {
+    conditions.push(`status = $${params.length + 1}`);
+    params.push(valid_status);
+  }
+
+  if (conditions.length > 0) {
+    query += ` WHERE ${conditions.join(" AND ")}`;
   }
 
   query += ` ORDER BY created_at ${orderDirection}`;
