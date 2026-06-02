@@ -164,22 +164,27 @@ const updateIssueInDB = async (
     }
   }
 
-  const { title, description, type, status } = payload;
+  const { title, description, type } = payload;
 
-  const result = await pool.query(
-    `
-      UPDATE issues
-      SET
-        title = COALESCE($1, title),
-        description = COALESCE($2, description),
-        type = COALESCE($3, type),
-        status = COALESCE($4, status),
-        updated_at = NOW()
-      WHERE id = $5
-      RETURNING *
-    `,
-    [title, description, type, status, id],
-  );
+  let query = `
+  UPDATE issues SET
+    title = COALESCE($1, title),
+    description = COALESCE($2, description),
+    type = COALESCE($3, type),
+`;
+
+  const params: any[] = [title, description, type];
+
+  if (isMaintainer) {
+    const { status } = payload;
+    query += `status = COALESCE($4, status), `;
+    params.push(status);
+  }
+
+  query += `updated_at = NOW() WHERE id = $${params.length + 1} RETURNING *`;
+  params.push(id);
+
+  const result = await pool.query(query, params);
 
   return result;
 };
