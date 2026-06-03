@@ -3,6 +3,11 @@ import { pool } from "../../database";
 const createIssueInDB = async (payload: any, reporter_id: number) => {
   const { title, description, type } = payload;
 
+  // description must be atleast 20 chars
+  if (!description || description.trim().length < 20) {
+    throw new Error("Description must be at least 20 characters long");
+  }
+
   const result = await pool.query(
     `
       INSERT INTO issues (
@@ -129,10 +134,10 @@ const getSingleIssueFromDB = async (id: any) => {
 const updateIssueInDB = async (
   id: any,
   payload: {
-    title: string;
-    description: string;
-    type: string;
-    status: string;
+    title?: string;
+    description?: string;
+    type?: string;
+    status?: string;
   },
   user: any,
 ) => {
@@ -166,12 +171,17 @@ const updateIssueInDB = async (
 
   const { title, description, type } = payload;
 
+  // description must be >= 20 chars
+  if (description !== undefined && description.trim().length < 20) {
+    throw new Error("Description must be at least 20 characters long");
+  }
+
   let query = `
   UPDATE issues SET
     title = COALESCE($1, title),
     description = COALESCE($2, description),
     type = COALESCE($3, type),
-`;
+    `;
 
   const params: any[] = [title, description, type];
 

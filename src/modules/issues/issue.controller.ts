@@ -13,6 +13,13 @@ const createIssue = async (req: Request, res: Response) => {
       data: result.rows[0],
     });
   } catch (error: any) {
+    if (error.message === "Description must be at least 20 characters long") {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: error.message,
@@ -26,7 +33,7 @@ const getAllIssues = async (req: Request, res: Response) => {
     const sort = req.query.sort as string | undefined;
     const type = req.query.type as string | undefined;
     const status = req.query.status as string | undefined;
-    
+
     const result = await issueService.getAllIssuesFromDB(sort, type, status);
 
     if (result.length === 0) {
@@ -98,6 +105,12 @@ const updateIssue = async (req: Request, res: Response) => {
       data: result.rows[0],
     });
   } catch (error: any) {
+    if (error.message === "Description must be at least 20 characters long") {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
     if (error.message.includes("Forbidden")) {
       return res.status(403).json({
         success: false,
