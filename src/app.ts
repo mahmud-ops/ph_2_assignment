@@ -7,6 +7,7 @@ import { userRouter } from "./modules/users/user.route";
 import { authRouter } from "./modules/auth/auth.route";
 import logger from "./middleware/logger";
 import { issueRouter } from "./modules/issues/issue.route";
+import globalErrorHandler from "./middleware/globalErrorHandler";
 
 const app: Application = express();
 
@@ -26,5 +27,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/issues", issueRouter);
+
+app.use(globalErrorHandler);
 
 export default app;
