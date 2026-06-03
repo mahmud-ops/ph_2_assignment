@@ -93,8 +93,8 @@ const updateUser = async (req: Request, res: Response) => {
     const { name, email, password, role } = req.body;
 
     if (
-      req.body.status !== "open" ||
-      req.body.status !== "in_progree" ||
+      req.body.status !== "open" &&
+      req.body.status !== "in_progress" &&
       req.body.status !== "resolved"
     ) {
       throw new Error("Invalid status");
