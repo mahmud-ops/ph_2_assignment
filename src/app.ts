@@ -3,11 +3,11 @@ import express, {
   type Request,
   type Response,
 } from "express";
-import { userRouter } from "./modules/users/user.route";
-import { authRouter } from "./modules/auth/auth.route";
-import logger from "./middleware/logger";
-import { issueRouter } from "./modules/issues/issue.route";
-import globalErrorHandler from "./middleware/globalErrorHandler";
+import { userRouter } from "./modules/users/user.route.js";
+import { authRouter } from "./modules/auth/auth.route.js";
+import logger from "./middleware/logger.js";
+import { issueRouter } from "./modules/issues/issue.route.js";
+import globalErrorHandler from "./middleware/globalErrorHandler.js";
 
 const app: Application = express();
 

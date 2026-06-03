@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken";
-import config from "../config";
-import { pool } from "../database";
+import config from "../config/index.js";
+import { pool } from "../database/index.js";
 
 const auth = () => {
   return async (req: Request, res: Response, next: NextFunction) => {

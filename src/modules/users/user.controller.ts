@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { userService } from "./user.service";
-import { sanitizeUser } from "./user.utility";
+import { userService } from "./user.service.js";
+import { sanitizeUser } from "./user.utility.js";
 
 const createUser = async (req: Request, res: Response) => {
   try {

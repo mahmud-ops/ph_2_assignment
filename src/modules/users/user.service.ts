@@ -1,4 +1,4 @@
-import { pool } from "../../database";
+import { pool } from "../../database/index.js";
 import bcrypt from "bcrypt";
 
 const createUserInDB = async (payload: any) => {

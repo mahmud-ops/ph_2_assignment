@@ -1,6 +1,6 @@
-import app from "./app";
-import config from "./config";
-import { initDB } from "./database";
+import app from "./app.js";
+import config from "./config/index.js";
+import { initDB } from "./database/index.js";
 
 const port = config.port;
 

@@ -1,4 +1,4 @@
-import { pool } from "../../database";
+import { pool } from "../../database/index.js";
 
 const createIssueInDB = async (payload: any, reporter_id: number) => {
   const { title, description, type } = payload;

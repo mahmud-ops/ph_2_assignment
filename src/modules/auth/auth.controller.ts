@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import { userService } from "../users/user.service";
-import { sanitizeUser } from "../users/user.utility";
-import { authService } from "./auth.service";
+import { userService } from "../users/user.service.js";
+import { sanitizeUser } from "../users/user.utility.js";
+import { authService } from "./auth.service.js";
 
 const signUpUser = async (req: Request, res: Response) => {
   try {
